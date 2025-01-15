@@ -1,10 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>AR.js GPS Demo</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/aframe/1.4.2/aframe.min.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/three.js/build/ar-threex-location-only.js"></script>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/ar.js/aframe/build/aframe-ar.min.js"></script>
     <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
@@ -14,24 +10,22 @@
             position: fixed;
             top: 20px;
             left: 20px;
-            background: rgba(0, 0, 0, 0.7);
+            background-color: rgba(0, 0, 0, 0.7);
             color: white;
-            padding: 10px;
+            padding: 10px 15px;
             border-radius: 5px;
-            z-index: 9999;
             font-family: Arial, sans-serif;
+            font-size: 16px;
+            z-index: 9999;
         }
     </style>
 </head>
-<body>
-    <div id="distance-display">距離：計算中...</div>
+<body style="margin: 0; overflow: hidden;">
+    <div id="distance-display">거리: 계산중...</div>
     
-    <a-scene
-        vr-mode-ui="enabled: false"
-        arjs="sourceType: webcam; debugUIEnabled: false; sourceWidth: 1280; sourceHeight: 960; displayWidth: 1280; displayHeight: 960;"
-        renderer="antialias: true; logarithmicDepthBuffer: true;">
-        
-        <a-camera gps-camera rotation-reader></a-camera>
+    <a-scene 
+        embedded 
+        arjs="sourceType: webcam; gpsMinAccuracy: 500; debugUIEnabled: false;">
         
         <a-entity 
             gps-entity-place="latitude: 33.888264252609964; longitude: 130.71142062923866;"
@@ -39,53 +33,35 @@
             look-at="[gps-camera]"
             scale="1 1 1">
         </a-entity>
+        
+        <a-camera gps-camera rotation-reader></a-camera>
     </a-scene>
-
+    
     <script>
-        window.onload = () => {
-            navigator.geolocation.watchPosition(
-                (position) => {
-                    // 목표 좌표 (서울시청 좌표를 예시로 사용)
-                    const targetLat = 33.888264252609964;
-                    const targetLon = 130.71142062923866;
-                    
-                    // 현재 위치
-                    const currentLat = position.coords.latitude;
-                    const currentLon = position.coords.longitude;
-                    
-                    // Haversine 공식을 사용한 거리 계산
-                    const R = 6371000; // 지구의 반경 (미터)
-                    const dLat = (targetLat - currentLat) * Math.PI / 180;
-                    const dLon = (targetLon - currentLon) * Math.PI / 180;
-                    const a = 
-                        Math.sin(dLat/2) * Math.sin(dLat/2) +
-                        Math.cos(currentLat * Math.PI / 180) * Math.cos(targetLat * Math.PI / 180) * 
-                        Math.sin(dLon/2) * Math.sin(dLon/2);
-                    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-                    const distance = R * c;
-                    
-                    // 거리 표시 업데이트 (미터 단위)
-                    let displayText;
-                    if (distance < 1000) {
-                        // 1km 미만일 경우 미터로 표시
-                        displayText = `距離： ${Math.round(distance)}m`;
-                    } else {
-                        // 1km 이상일 경우 소수점 둘째 자리까지 킬로미터로 표시
-                        displayText = `距離： ${(distance/1000).toFixed(2)}km`;
-                    }
-                    document.getElementById('distance-display').innerHTML = displayText;
-                },
-                (err) => {
-                    console.error('GPS エラー:', err);
-                    alert('GPS 位置情報エラー発生.');
-                },
-                {
-                    enableHighAccuracy: true,
-                    maximumAge: 0,
-                    timeout: 27000
-                }
-            );
-        };
+        const targetLat = 33.888264252609964;
+        const targetLon = 130.71142062923866;
+        
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371e3; 
+            const toRad = (value) => (value * Math.PI) / 180;
+            const φ1 = toRad(lat1);
+            const φ2 = toRad(lat2);
+            const Δφ = toRad(lat2 - lat1);
+            const Δλ = toRad(lon2 - lon1);
+            const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                      Math.cos(φ1) * Math.cos(φ2) *
+                      Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+            return R * c;
+        }
+        
+        document.querySelector("a-camera").addEventListener("gps-camera-update-position", (event) => {
+            const userLat = event.detail.position.latitude;
+            const userLon = event.detail.position.longitude;
+            const distance = calculateDistance(userLat, userLon, targetLat, targetLon);
+            const distanceDisplay = document.querySelector("#distance-display");
+            distanceDisplay.textContent = `거리: ${distance.toFixed(2)}m`;
+        });
     </script>
 </body>
 </html>
