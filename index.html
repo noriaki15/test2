@@ -1,50 +1,74 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GPS AR Distance</title>
-    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/ar.js/aframe/build/aframe-ar.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/aframe-gps-camera/dist/aframe-gps-camera.min.js"></script>
+  <title>AR.js Location-Based AR</title>
+  <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+  <script src="https://cdn.rawgit.com/jeromeetienne/ar.js/2.2.1/aframe/build/aframe-ar.min.js"></script>
+  <style>
+    #info {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      background-color: rgba(255, 255, 255, 0.8);
+      padding: 10px;
+      border-radius: 5px;
+      font-family: Arial, sans-serif;
+    }
+  </style>
 </head>
-<body style="margin: 0; overflow: hidden;">
-    <a-scene vr-mode-ui="enabled: false" embedded arjs>
-        <!-- GPS Camera -->
-        <a-camera gps-camera rotation-reader>
-        </a-camera>
-        
-        <!-- Distance Display -->
-        <div id="distance-display" style="position: fixed; top: 10px; left: 10px; color: white; background: rgba(0, 0, 0, 0.5); padding: 10px; border-radius: 5px; font-size: 16px;">
-            거리: 계산 중...
-        </div>
-    </a-scene>
+<body>
+  <div id="info">Distance: Calculating...</div>
+  <a-scene 
+    embedded 
+    arjs="sourceType: webcam; debugUIEnabled: false;">
 
-    <script>
-        const targetLat = 33.888264252609964;
-        const targetLon = 130.71142062923866;
-        
-        function calculateDistance(lat1, lon1, lat2, lon2) {
-            const R = 6371e3; 
-            const toRad = (value) => (value * Math.PI) / 180;
-            const φ1 = toRad(lat1);
-            const φ2 = toRad(lat2);
-            const Δφ = toRad(lat2 - lat1);
-            const Δλ = toRad(lon2 - lon1);
-            const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
-                      Math.cos(φ1) * Math.cos(φ2) *
-                      Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
-            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-            return R * c;
-        }
-        
-        document.querySelector("a-camera").addEventListener("gps-camera-update-position", (event) => {
-            const userLat = event.detail.position.latitude;
-            const userLon = event.detail.position.longitude;
-            const distance = calculateDistance(userLat, userLon, targetLat, targetLon);
-            const distanceDisplay = document.querySelector("#distance-display");
-            distanceDisplay.textContent = `거리: ${distance.toFixed(2)}m`;
-        });
-    </script>
+    <!-- Add the 3D object at the specific GPS coordinates -->
+    <a-entity 
+      gps-entity-place="latitude: 33.888264252609964; longitude: 130.71142062923866;"
+      geometry="primitive: box; height: 2; width: 2; depth: 2;" 
+      material="color: red;">
+    </a-entity>
+
+    <!-- Camera -->
+    <a-camera gps-camera="minAccuracy: 100;" position="0 0 0">
+    </a-camera>
+  </a-scene>
+
+  <script>
+    // Function to calculate distance between two GPS points
+    function calculateDistance(lat1, lon1, lat2, lon2) {
+      const R = 6371e3; // Earth's radius in meters
+      const toRadians = (degrees) => degrees * (Math.PI / 180);
+
+      const φ1 = toRadians(lat1);
+      const φ2 = toRadians(lat2);
+      const Δφ = toRadians(lat2 - lat1);
+      const Δλ = toRadians(lon2 - lon1);
+
+      const a = 
+        Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+        Math.cos(φ1) * Math.cos(φ2) *
+        Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+      return R * c;
+    }
+
+    const infoDiv = document.getElementById('info');
+    const targetLat = 33.888264252609964;
+    const targetLon = 130.71142062923866;
+
+    // Listen for camera GPS updates
+    window.addEventListener('gps-camera-update-position', (event) => {
+      const userLat = event.detail.position.latitude;
+      const userLon = event.detail.position.longitude;
+
+      // Calculate the distance to the target
+      const distance = calculateDistance(userLat, userLon, targetLat, targetLon);
+
+      // Update the interface
+      infoDiv.innerText = `Distance: ${distance.toFixed(2)} meters`;
+    });
+  </script>
 </body>
 </html>
