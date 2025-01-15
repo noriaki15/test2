@@ -58,6 +58,7 @@
         // 거리 인터페이스 업데이트
         const distanceInterface = document.getElementById("distance-interface");
 
+        // GPS 업데이트를 감시
         navigator.geolocation.watchPosition(
             function (position) {
                 const userLat = position.coords.latitude;
@@ -65,11 +66,18 @@
 
                 // 사용자와 모델 간 거리 계산
                 const distance = calculateDistance(userLat, userLon, modelLat, modelLon);
+
+                // 거리 정보 업데이트
                 distanceInterface.innerHTML = `Distance: ${distance.toFixed(2)} m`;
             },
             function (error) {
                 console.error("Error getting location:", error);
                 distanceInterface.innerHTML = "Unable to get location.";
+            },
+            {
+                enableHighAccuracy: true, // 높은 정확도의 위치 정보 요청
+                maximumAge: 0,           // 위치 캐싱 비활성화
+                timeout: 5000            // 최대 응답 시간 (5초)
             }
         );
     </script>
