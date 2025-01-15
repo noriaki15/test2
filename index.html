@@ -32,7 +32,7 @@
         <a-entity
             gltf-model="orio.gltf"
             scale="1 1 1"
-            gps-entity-place="latitude: 33.888015469898704; longitude: 130.7107229141166;"
+            gps-entity-place="latitude: 33.888264252609964; longitude: 130.71142062923866;"
             look-at="[gps-camera]">
         </a-entity>
     </a-scene>
@@ -42,8 +42,8 @@
             navigator.geolocation.watchPosition(
                 (position) => {
                     // 목표 좌표 (서울시청 좌표를 예시로 사용)
-                    const targetLat = 33.888015469898704;
-                    const targetLon = 130.7107229141166;
+                    const targetLat = 33.888264252609964;
+                    const targetLon = 130.71142062923866;
                     
                     // 현재 위치
                     const currentLat = position.coords.latitude;
