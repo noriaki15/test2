@@ -1,1 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR.js GPS Distance Example</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/ar.js/aframe/build/aframe-ar.min.js"></script>
+</head>
+<body style="margin: 0; overflow: hidden;">
+    <a-scene embedded arjs>
+        <!-- GPS로 위치를 지정하여 모델을 배치 -->
+        <a-entity gps-entity-place="latitude: 33.888015469898704; longitude: 130.7107229141166;">
+            <a-box color="red" scale="1 1 1"></a-box>
+        </a-entity>
 
+        <!-- 거리 정보를 표시할 텍스트 -->
+        <a-text
+            id="distance-display"
+            value="Calculating distance..."
+            position="0 2 -5"
+            align="center"
+            color="#FFFFFF"
+        ></a-text>
+    </a-scene>
+
+    <script>
+        // 모델의 GPS 좌표 설정
+        const modelLat = 33.888015469898704; // 모델의 위도
+        const modelLon = 130.7107229141166; // 모델의 경도
+
+        // 거리 계산 함수
+        function calculateDistance(lat1, lon1, lat2, lon2) {
+            const R = 6371e3; // 지구 반지름 (미터)
+            const φ1 = (lat1 * Math.PI) / 180;
+            const φ2 = (lat2 * Math.PI) / 180;
+            const Δφ = ((lat2 - lat1) * Math.PI) / 180;
+            const Δλ = ((lon2 - lon1) * Math.PI) / 180;
+
+            const a =
+                Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                Math.cos(φ1) * Math.cos(φ2) * Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+            const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+            return R * c; // 거리 반환 (미터)
+        }
+
+        // 거리 표시를 업데이트하는 함수
+        const distanceDisplay = document.querySelector("#distance-display");
+        navigator.geolocation.watchPosition(function (position) {
+            const userLat = position.coords.latitude;
+            const userLon = position.coords.longitude;
+
+            // 모델과 사용자의 거리 계산
+            const distance = calculateDistance(userLat, userLon, modelLat, modelLon);
+            distanceDisplay.setAttribute("value", `Distance: ${distance.toFixed(2)} m`);
+        }, function (error) {
+            console.error("Error getting location:", error);
+            distanceDisplay.setAttribute("value", "Unable to get location.");
+        });
+    </script>
+</body>
+</html>
