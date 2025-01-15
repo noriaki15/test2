@@ -24,7 +24,6 @@
     embedded 
     arjs="sourceType: webcam; debugUIEnabled: false;">
 
-    <!-- Add the 3D object at the specific GPS coordinates -->
     <a-entity 
       gps-entity-place="latitude: 33.888264252609964; longitude: 130.71142062923866;"
       gltf-model="orio.gltf"
@@ -32,15 +31,13 @@
       scale="1 1 1">
     </a-entity>
 
-    <!-- Camera -->
-    <a-camera gps-camera="minAccuracy: 100;" position="0 0 0">
+    <a-camera gps-camera="minAccuracy: 500;" position="0 0 0">
     </a-camera>
   </a-scene>
 
   <script>
-    // Function to calculate distance between two GPS points
     function calculateDistance(lat1, lon1, lat2, lon2) {
-      const R = 6371e3; // Earth's radius in meters
+      const R = 6371e3;
       const toRadians = (degrees) => degrees * (Math.PI / 180);
 
       const φ1 = toRadians(lat1);
@@ -61,15 +58,12 @@
     const targetLat = 33.888264252609964;
     const targetLon = 130.71142062923866;
 
-    // Listen for camera GPS updates
     window.addEventListener('gps-camera-update-position', (event) => {
       const userLat = event.detail.position.latitude;
       const userLon = event.detail.position.longitude;
 
-      // Calculate the distance to the target
       const distance = calculateDistance(userLat, userLon, targetLat, targetLon);
 
-      // Update the interface
       infoDiv.innerText = `Distance: ${distance.toFixed(2)} meters`;
     });
   </script>
