@@ -4,6 +4,8 @@
   <title>AR.js Location-Based AR</title>
   <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
   <script src="https://cdn.rawgit.com/jeromeetienne/ar.js/2.2.1/aframe/build/aframe-ar.min.js"></script>
+  <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
+  <script src="https://unpkg.com/aframe-gps-camera/dist/aframe-gps-camera.min.js"></script>
   <style>
     #info {
       position: absolute;
@@ -26,6 +28,7 @@
     <a-entity 
       gps-entity-place="latitude: 33.888264252609964; longitude: 130.71142062923866;"
       gltf-model="orio.gltf"
+      look-at="[gps-camera]"
       scale="1 1 1">
     </a-entity>
 
