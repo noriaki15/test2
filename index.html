@@ -2,32 +2,42 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=0.01">
-    <title>AR.js GPS Distance Example</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AR.js with Distance Display</title>
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/jeromeetienne/ar.js/aframe/build/aframe-ar.min.js"></script>
+    <style>
+        /* 거리 표시 인터페이스 스타일 */
+        #distance-interface {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0, 0, 0, 0.7);
+            color: #fff;
+            padding: 10px;
+            border-radius: 8px;
+            font-family: Arial, sans-serif;
+            font-size: 14px;
+            z-index: 10;
+        }
+    </style>
 </head>
 <body style="margin: 0; overflow: hidden;">
+    <!-- 거리 정보를 표시할 고정 인터페이스 -->
+    <div id="distance-interface">Distance: Calculating...</div>
+
+    <!-- AR.js 장면 -->
     <a-scene embedded arjs>
-        <!-- GPS로 위치를 지정하여 모델을 배치 -->
+        <!-- GPS 좌표로 모델 배치 -->
         <a-entity gps-entity-place="latitude: 33.888015469898704; longitude: 130.7107229141166;">
             <a-box color="red" scale="1 1 1"></a-box>
         </a-entity>
-
-        <!-- 거리 정보를 표시할 텍스트 -->
-        <a-text
-            id="distance-display"
-            value="Calculating distance..."
-            position="0 2 -5"
-            align="center"
-            color="#FFFFFF"
-        ></a-text>
     </a-scene>
 
     <script>
-        // 모델의 GPS 좌표 설정
-        const modelLat = 33.888015469898704; // 모델의 위도
-        const modelLon = 130.7107229141166; // 모델의 경도
+        // 모델의 GPS 좌표
+        const modelLat = 33.888015469898704; // 모델 위도
+        const modelLon = 130.7107229141166; // 모델 경도
 
         // 거리 계산 함수
         function calculateDistance(lat1, lon1, lat2, lon2) {
@@ -45,19 +55,23 @@
             return R * c; // 거리 반환 (미터)
         }
 
-        // 거리 표시를 업데이트하는 함수
-        const distanceDisplay = document.querySelector("#distance-display");
-        navigator.geolocation.watchPosition(function (position) {
-            const userLat = position.coords.latitude;
-            const userLon = position.coords.longitude;
+        // 거리 인터페이스 업데이트
+        const distanceInterface = document.getElementById("distance-interface");
 
-            // 모델과 사용자의 거리 계산
-            const distance = calculateDistance(userLat, userLon, modelLat, modelLon);
-            distanceDisplay.setAttribute("value", `Distance: ${distance.toFixed(2)} m`);
-        }, function (error) {
-            console.error("Error getting location:", error);
-            distanceDisplay.setAttribute("value", "Unable to get location.");
-        });
+        navigator.geolocation.watchPosition(
+            function (position) {
+                const userLat = position.coords.latitude;
+                const userLon = position.coords.longitude;
+
+                // 사용자와 모델 간 거리 계산
+                const distance = calculateDistance(userLat, userLon, modelLat, modelLon);
+                distanceInterface.innerHTML = `Distance: ${distance.toFixed(2)} m`;
+            },
+            function (error) {
+                console.error("Error getting location:", error);
+                distanceInterface.innerHTML = "Unable to get location.";
+            }
+        );
     </script>
 </body>
 </html>
