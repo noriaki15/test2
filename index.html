@@ -1,20 +1,80 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Test</title>
+    <meta charset="UTF-8">
+    <title>AR.js with GLTF Model and Info Button</title>
+    <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ar.js/2.2.2/aframe-ar.js"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+
+        #info-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 10px 15px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        #info-text {
+            position: absolute;
+            top: 50px;
+            right: 10px;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            border-radius: 5px;
+            font-size: 14px;
+            display: none; /* 초기에는 숨김 */
+        }
+    </style>
 </head>
 <body>
+    <!-- 버튼과 설명 텍스트 -->
     <button id="info-button">프로그램 설명</button>
-    <div id="info-text" style="display:none;">이 프로그램은 AR.js를 사용하여 증강현실 경험을 제공합니다.</div>
+    <div id="info-text">이 프로그램은 AR.js를 사용하여 증강현실 경험을 제공합니다. Hiro 마커를 통해 3D 모델이 표시됩니다.</div>
+
+    <!-- AR.js 장면 -->
+    <a-scene 
+        embedded 
+        arjs='sourceType: webcam; debugUIEnabled: false;' 
+        vr-mode-ui="enabled: false"
+    >
+        <a-assets>
+            <a-asset-item 
+                id="3d-model" 
+                src="orio.gltf"
+            ></a-asset-item>
+        </a-assets>
+        <a-marker preset="hiro">
+            <a-entity 
+                gltf-model="#3d-model"
+                scale="0.5 0.5 0.5"
+                position="0 0 0"
+                rotation="-90 0 0"  
+                animation="property: position; to: 0 0 1; dir: alternate; dur: 1000; loop: true;"
+            ></a-entity>
+        </a-marker>
+        <a-entity camera></a-entity>
+    </a-scene>
+
     <script>
         const infoButton = document.getElementById('info-button');
         const infoText = document.getElementById('info-text');
 
         infoButton.addEventListener('click', () => {
             console.log('버튼 클릭됨');
-            infoText.style.display = 'block';
+            infoText.style.display = 'block'; // 텍스트 표시
             setTimeout(() => {
-                infoText.style.display = 'none';
+                infoText.style.display = 'none'; // 3초 후 텍스트 숨김
             }, 3000);
         });
     </script>
