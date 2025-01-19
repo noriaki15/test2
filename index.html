@@ -7,6 +7,34 @@
   <script src="https://unpkg.com/aframe-look-at-component@0.8.0/dist/aframe-look-at-component.min.js"></script>
   <script src="https://unpkg.com/aframe-gps-camera/dist/aframe-gps-camera.min.js"></script>
   <style>
+        body { margin: 0; overflow: hidden; }
+
+        #info-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            padding: 10px 15px;
+            background-color: rgba(0, 0, 0, 0.7);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 14px;
+            cursor: pointer;
+            z-index: 10;
+        }
+
+        #info-text {
+            position: absolute;
+            top: 50px;
+            right: 10px;
+            padding: 10px;
+            background-color: rgba(0, 0, 0, 0.8);
+            color: white;
+            border-radius: 5px;
+            font-size: 14px;
+            display: none;
+            z-index: 10;
+        }
     #info {
       position: absolute;
       top: 10px;
@@ -19,6 +47,8 @@
   </style>
 </head>
 <body>
+  <button id="info-button">体験方法</button>
+  <div id="info-text">カメラでHiroマーカーを映す</div>
   <div id="info">Distance: Calculating...</div>
   <a-scene 
     embedded 
@@ -66,6 +96,20 @@
 
       infoDiv.innerText = `距離： ${distance.toFixed(2)} m`;
     });
+  </script>
+  <script>
+        const infoButton = document.getElementById('info-button');
+        const infoText = document.getElementById('info-text');
+
+        infoButton.addEventListener('click', () => {
+            console.log('ボタンがクリックされました');
+
+            infoText.style.cssText = 'display: block !important;';
+
+            setTimeout(() => {
+                infoText.style.display = 'none'; 
+            }, 3000);
+        });
   </script>
 </body>
 </html>
