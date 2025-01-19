@@ -7,8 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ar.js/2.2.2/aframe-ar.js"></script>
     <style>
         body { margin: 0; overflow: hidden; }
-        
-        /* 프로그램 설명 버튼을 화면 위에 우선적으로 보이도록 */
+
         #info-button {
             position: absolute;
             top: 10px;
@@ -20,10 +19,9 @@
             border-radius: 5px;
             font-size: 14px;
             cursor: pointer;
-            z-index: 10; /* 버튼을 다른 요소들보다 위에 표시 */
+            z-index: 10;
         }
 
-        /* 설명 텍스트 */
         #info-text {
             position: absolute;
             top: 50px;
@@ -33,17 +31,15 @@
             color: white;
             border-radius: 5px;
             font-size: 14px;
-            display: none; /* 기본적으로 숨김 */
-            z-index: 10; /* 텍스트도 버튼 위에 표시되도록 설정 */
+            display: none;
+            z-index: 10;
         }
     </style>
 </head>
 <body>
-    <!-- 프로그램 설명 버튼과 텍스트 -->
     <button id="info-button">体験方法</button>
     <div id="info-text">カメラでHiroマーカーを映す</div>
 
-    <!-- AR.js 환경 -->
     <a-scene 
         embedded 
         arjs='sourceType: webcam; debugUIEnabled: false;' 
@@ -69,12 +65,10 @@
         const infoText = document.getElementById('info-text');
 
         infoButton.addEventListener('click', () => {
-            console.log('버튼 클릭됨');
+            console.log('ボタンがクリックされました');
             
-            // 텍스트 표시, 중요도를 높이기 위해 !important 추가
             infoText.style.cssText = 'display: block !important;';
-            
-            // 3초 후 텍스트 숨김
+
             setTimeout(() => {
                 infoText.style.display = 'none'; 
             }, 3000);
