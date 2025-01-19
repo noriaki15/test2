@@ -6,11 +6,7 @@
     <script src="https://aframe.io/releases/1.2.0/aframe.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ar.js/2.2.2/aframe-ar.js"></script>
     <style>
-        body {
-            margin: 0;
-            overflow: hidden;
-        }
-
+        body { margin: 0; overflow: hidden; }
         #info-button {
             position: absolute;
             top: 10px;
@@ -23,7 +19,6 @@
             font-size: 14px;
             cursor: pointer;
         }
-
         #info-text {
             position: absolute;
             top: 50px;
@@ -33,33 +28,30 @@
             color: white;
             border-radius: 5px;
             font-size: 14px;
-            display: none; /* 초기에는 숨김 */
+            display: none; /* 초기 숨김 */
         }
     </style>
 </head>
 <body>
-    <!-- 버튼과 설명 텍스트 -->
+    <!-- 프로그램 설명 버튼과 텍스트 -->
     <button id="info-button">프로그램 설명</button>
-    <div id="info-text">이 프로그램은 AR.js를 사용하여 증강현실 경험을 제공합니다. Hiro 마커를 통해 3D 모델이 표시됩니다.</div>
+    <div id="info-text">이 프로그램은 AR.js를 사용하여 증강현실 경험을 제공합니다.</div>
 
-    <!-- AR.js 장면 -->
+    <!-- AR.js 환경 -->
     <a-scene 
         embedded 
         arjs='sourceType: webcam; debugUIEnabled: false;' 
         vr-mode-ui="enabled: false"
     >
         <a-assets>
-            <a-asset-item 
-                id="3d-model" 
-                src="orio.gltf"
-            ></a-asset-item>
+            <a-asset-item id="3d-model" src="orio.gltf"></a-asset-item>
         </a-assets>
         <a-marker preset="hiro">
             <a-entity 
                 gltf-model="#3d-model"
                 scale="0.5 0.5 0.5"
                 position="0 0 0"
-                rotation="-90 0 0"  
+                rotation="-90 0 0"
                 animation="property: position; to: 0 0 1; dir: alternate; dur: 1000; loop: true;"
             ></a-entity>
         </a-marker>
