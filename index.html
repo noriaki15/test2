@@ -64,7 +64,7 @@
 
         infoButton.addEventListener('click', () => {
             console.log('버튼 클릭됨');
-            infoText.style.display = 'block'; // 텍스트 표시
+            infoText.style.cssText = 'display: block !important;'; 
             setTimeout(() => {
                 infoText.style.display = 'none'; // 3초 후 텍스트 숨김
             }, 3000);
