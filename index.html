@@ -7,6 +7,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ar.js/2.2.2/aframe-ar.js"></script>
     <style>
         body { margin: 0; overflow: hidden; }
+        
         #info-button {
             position: absolute;
             top: 10px;
@@ -19,6 +20,7 @@
             font-size: 14px;
             cursor: pointer;
         }
+
         #info-text {
             position: absolute;
             top: 50px;
@@ -28,7 +30,7 @@
             color: white;
             border-radius: 5px;
             font-size: 14px;
-            display: none; /* 초기 숨김 */
+            display: none; /* 기본적으로 숨김 */
         }
     </style>
 </head>
@@ -64,9 +66,13 @@
 
         infoButton.addEventListener('click', () => {
             console.log('버튼 클릭됨');
-            infoText.style.cssText = 'display: block !important;'; 
+            
+            // 텍스트 표시, 중요도를 높이기 위해 !important 추가
+            infoText.style.cssText = 'display: block !important;';
+            
+            // 3초 후 텍스트 숨김
             setTimeout(() => {
-                infoText.style.display = 'none'; // 3초 후 텍스트 숨김
+                infoText.style.display = 'none'; 
             }, 3000);
         });
     </script>
